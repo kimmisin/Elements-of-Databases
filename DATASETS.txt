@@ -1,0 +1,39 @@
+Dataset Names:
+COVID-cases Daily Reports 2020-2021
+American Community Survey (ACS) 2019 (Data contains estimates of the last 5 years)
+
+Dataset Download URLs:
+COVID:
+https://github.com/CSSEGISandData/COVID-19.git
+https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports
+ACS:
+https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/
+
+Interesting Entities:
+The COVID data has daily information based on countries/location with interesting data points such as the covid case distribution (confirmed cases, deaths, recovered cases, and active cases), their incident rates and fatality ratios. In addition to country names, their latitude and longitude is listed, making it possible to query by coordinates.
+
+The ACS data has housing, demographic, social, and economic data over the years 2014-2019. Interesting entities in the housing data includes the number of rooms/bedrooms in the housing unit, the number of occupants per room, the type of heating they have, the value of their housing, and what people are paying in rent as a percentage of their income. In the demographics data there is data on sex and age along with population numbers of different bucket groups. The data includes total population and citizen populations (an area of possible focus) and there is race data as well. The social data includes estimates of population in the US that fit inside certain social categories such as household types, relationship status, school enrollment, and highest educational level received. Social data also includes information on place of birth, citizenship status, place of birth, ancestry and computer and internet use. The economic data includes information on employment status, occupation, industry, commute to work, class and income. It also includes the percentage of different groups of people and families whose income in the past year is below the poverty level. 
+
+Insights We Hope to Gain:
+Since the main method of preventing the spread of COVID-19 is done via self isolation, the housing data with information on the number of people living in a room would be nice to look at to see if there was great difficulty maintaining isolation for a portion of the population. In addition, the data regarding the percentage of income spent on rent is interesting to see in the initial stages of the covid pandemic how unsustainable it would have become to continuing regular living due to the loss of employment and slow release of monetary relief.
+
+With the demographic data, it would be interesting to see the number of cases split by race, age, gender, and citizenship but there isn’t a clear path of how to separate that out with the covid data. We would need different data. Since the ACS data is focused on the US, we would only be able to see what percentage of the US population was affected by COVID-19 in a certain time period. Additional data from other countries would be needed for comparison studies.
+
+With the majority of schools going online during the pandemic, it would be interesting to see how school enrollment has been affected within the last year. The social data also includes information on those who moved in the past year, a spike in moves might reflect many decisions to move back home during school or due to financial burdens. Lastly, it would be interesting to analyze the data on computers and internet use as the dependency on technology has rose for many during the pandemic and work from home platforms. 
+
+Since the beginning of COVID-19 outbreak, the United States has seen an economic crisis. Exploration of the employment status, as well class and income data, throughout the pandemic would allow us to see how much the job market has truly been affected. It would also be interesting to see how different industries have grown as a result of a large shift to work from home employment.
+
+Notes: 
+Due to the format of the ACS data, no substantial query could be made. The ACS data is nested and has data on 2 axes rather than the typical one axis data that CSVs usually have. When sampling the data with a simple select all, only header labels are returned and no data values are outputted. The ACS data needs to be split up into various tables, since there are tables nested into each current table in Big Query, and in each table there are nested columns, therefore these columns will need to be cherry picked or merged into a lump or average. So in each CSV file, we would have to create multiple tables that contains just one entity such as in the housing CSV file there is a nested table called “Housing Occupancy” that can be a table on its one in Big Query with fields: “Total housing units”, “Occupied housing units”, “Vacant housing units”, “Homeowner vacancy rate”, and “Rental vacancy rate”. The ACS data requires a lot of transforms to make it queryable. 
+
+Therefore, the 10 test SQL queries were done using the COVID-19 data. The COVID-19 data has some files with incompatible date-time format to fit under the SQL TIMESTAMP data type; thus, the last_update column was made to be a STRING for now until the COVID-19 data is transformed in future milestones (only some tables required this exception). The COVID-19 data is currently only suitable with full outer joins (but even so there is no substantial PK/FK to join on) since the labels are the same (but some of the column names are formatted slightly differently which needs to be fixed). Ideally, the COVID data should be one table. Therefore instead of JOIN clauses, UNION clauses are more useful to use. 
+
+Due to the inability to access the ACS data as it is currently formatted, no substantial JOIN clause could be done between the COVID-19 and ACS dataset. In addition, the COVID-19 data is not suitable for JOINs between its own tables. Therefore, UNION clauses are used as a substitute for JOIN clauses in terms of the 4/6 SQL requirements stated in the milestone instructions. This substitution was approved by Zhaosong on Piazza.
+
+
+*Example JOIN query attempted between COVID tables: the JOIN results in double columns of the same field types, which is not useful for meaningful queries.
+Select *
+FROM covid_fall2020 as f
+JOIN covid_summer2020 as s
+ON f.Country_Region = f.Country_Region
+LIMIT 5
