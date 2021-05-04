@@ -14,9 +14,10 @@ class FormatForGroupBy(beam.DoFn):
     lat = element['latitude']
     longi = element['longitude']
     combine = element['combined_key']
-
+    
+    new_key = str(lat) + '-' + str(longi)
     row = element
-    lat_tuple = (lat, row)
+    lat_tuple = (new_key, row)
     
     return [lat_tuple]
 
@@ -42,7 +43,7 @@ class RemoveDup(beam.DoFn):
             county = loc_list[i].get('county', 0)
             state = loc_list[i].get('state', 0)
             country = loc_list[i].get('country', 0)
-            print(county, state, country)
+            
             if (state == None and county == 0):
                 if len(country) < country_length:
                     country_length = len(country)

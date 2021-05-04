@@ -42,7 +42,7 @@ def run():
 
      out_pcoll = query_results | 'Format last_update' >> beam.ParDo(FormatDate())
 
-     out_pcoll | 'Log output' >> WriteToText('output.txt')
+     out_pcoll | 'Log output' >> WriteToText('output_date.txt')
 
      dataset_id = 'datamart'
      table_id = PROJECT_ID + ':' + dataset_id + '.' + 'cases_Beam'
