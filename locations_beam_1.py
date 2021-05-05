@@ -115,13 +115,14 @@ def run():
      table_id = PROJECT_ID + ':' + dataset_id + '.' + 'locations_Beam'
      schema_id = 'id:INTEGER,fips:INTEGER,admin2:STRING,city:STRING,state:STRING,country:STRING,latitude:FLOAT,longitude:FLOAT,combined_key:STRING'
 
-     # write the PCollection of unique locations to a new BigQuery table
-     unique_loc_pcoll | 'Write to BQ' >> WriteToBigQuery(table=table_id, schema=schema_id, custom_gcs_temp_location=BUCKET)
-     
+     # write the PCollection of unique locations to a new BigQuery table or replace the table if exists
+     unique_loc_pcoll | 'Write to BQ' >> WriteToBigQuery(table=table_id, schema=schema_id, custom_gcs_temp_location=BUCKET, write_disposition='WRITE_TRUNCATE')
+    
+     # run the pipeline until finshed
      result = p.run()
      result.wait_until_finish()      
 
-
+# call run()
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.ERROR)
   run()
